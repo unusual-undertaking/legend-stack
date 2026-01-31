@@ -19,7 +19,7 @@ npm install
 To run:
 
 ```bash
-npm run dev
+npx vite dev
 npx convex dev
 ```
 
@@ -53,6 +53,10 @@ Note: certain options changes may require schema generation. The Better Auth doc
 - Cloudflare R2 for image storage
 - Resend for emails
 - Polar or Autumn for billing/subscriptions (undecided which one atm)
+
+## Notes
+
+- Verifying emails and resetting passwords requires sending emails (project is configured for Resend) that contains a url that can be visited to complete the action, but locally (or when a Resend API key is not available) the verification urls will be logged to the console (the `npx convex dev` terminal window). 
 
 ## TODO
 
