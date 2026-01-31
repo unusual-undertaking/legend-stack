@@ -79,8 +79,8 @@ Note: certain options changes may require schema generation. The Better Auth doc
 - [x] Email Verification (via Better Auth component)
 - [x] Sign Out (via Better Auth component)
 - [x] Set up Turborepo monorepo
-- [ ] Oxfmt & Oxlint setup
-- [ ] Lint stage pre-commit hook
+- [x] Oxfmt & Oxlint setup
+- [x] Lint-staged / husky pre-commit hook
 - [ ] Convex Effect setup
 - [ ] Account page
 - [ ] Account page: Change password
