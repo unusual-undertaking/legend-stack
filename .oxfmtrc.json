@@ -1,3 +1,11 @@
 {
-  "ignorePatterns": []
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/out/**",
+    "**/.tanstack/**",
+    "**/convex/_generated/**"
+  ]
 }

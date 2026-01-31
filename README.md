@@ -69,7 +69,7 @@ Note: certain options changes may require schema generation. The Better Auth doc
 
 ## Notes
 
-- Verifying emails and resetting passwords requires sending emails (project is configured for Resend) that contains a url that can be visited to complete the action, but locally (or when a Resend API key is not available) the verification urls will be logged to the console (the `npx convex dev` terminal window). 
+- Verifying emails and resetting passwords requires sending emails (project is configured for Resend) that contains a url that can be visited to complete the action, but locally (or when a Resend API key is not available) the verification urls will be logged to the console (the `npx convex dev` terminal window).
 
 ## TODO
 
@@ -78,7 +78,7 @@ Note: certain options changes may require schema generation. The Better Auth doc
 - [x] Reset Passwords (via Better Auth component)
 - [x] Email Verification (via Better Auth component)
 - [x] Sign Out (via Better Auth component)
-- [ ] Set up Turborepo monorepo
+- [x] Set up Turborepo monorepo
 - [ ] Oxfmt & Oxlint setup
 - [ ] Lint stage pre-commit hook
 - [ ] Convex Effect setup
