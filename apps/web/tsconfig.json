@@ -9,8 +9,7 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-        "@/*": ["./src/*"],
-        "convex/*": ["./convex/*"]
+        "@/*": ["./src/*"]
     }
   }
 }

@@ -16,11 +16,23 @@ To install dependencies:
 npm install
 ```
 
-To run:
+To run (web + backend together):
 
 ```bash
-npx vite dev
-npx convex dev
+npm run dev
+```
+
+To run separately (two terminals):
+
+```bash
+npm run dev:web
+npm run dev:backend
+```
+
+If you need to configure Convex locally:
+
+```bash
+npm run dev:setup
 ```
 
 To build:
@@ -32,13 +44,14 @@ npm run build
 To deploy:
 
 ```bash
+cd packages/backend
 npx convex deploy
 ```
 
 If you ever need to update the local Better Auth schema, run:
 
 ```bash
-cd convex/betterAuth
+cd packages/backend/convex/betterAuth
 npx @better-auth/cli generate -y
 ```
 

@@ -1,0 +1,29 @@
+{
+  "name": "@convex-tanstack-starter-kit/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "convex dev",
+    "dev:setup": "convex dev --configure --until-success"
+  },
+  "dependencies": {
+    "@convex-dev/better-auth": "^0.10.10",
+    "@convex-dev/resend": "^0.1.13",
+    "@react-email/components": "1.0.4",
+    "@react-email/render": "2.0.2",
+    "better-auth": "1.4.9",
+    "convex": "^1.31.3",
+    "convex-helpers": "^0.1.105",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "5.2.1",
+    "@types/node": "^25.0.6",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "react-email": "5.2.1",
+    "typescript": "^5.9.3"
+  }
+}

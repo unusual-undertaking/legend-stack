@@ -1,0 +1,51 @@
+
+> build
+> vite build
+
+(node:92043) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+vite v7.3.1 building client environment for production...
+transforming...
+✓ 2105 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/client/assets/app-BchroK6B.css              49.07 kB │ gzip:   9.03 kB
+dist/client/assets/container-D8qBjagG.js          0.23 kB │ gzip:   0.18 kB
+dist/client/assets/sign-in-CdXpWcbZ.js            2.00 kB │ gzip:   0.87 kB
+dist/client/assets/forgot-password-Dcc6K9o3.js    2.42 kB │ gzip:   0.95 kB
+dist/client/assets/sign-up-CGeAkJuO.js            4.60 kB │ gzip:   1.49 kB
+dist/client/assets/index-CM5YTT3a.js            139.33 kB │ gzip:  38.95 kB
+dist/client/assets/main-Drho2gb1.js             521.52 kB │ gzip: 162.28 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.51s
+vite v7.3.1 building ssr environment for production...
+transforming...
+"createRequestHandler", "defineHandlerCallback", "transformPipeableStreamWithRouter" and "transformReadableStreamWithRouter" are imported from external module "@tanstack/router-core/ssr/server" but never used in "../../node_modules/@tanstack/start-server-core/dist/esm/createStartHandler.js" and "../../node_modules/@tanstack/start-server-core/dist/esm/index.js".
+"RawStream" is imported from external module "@tanstack/router-core" but never used in "../../node_modules/@tanstack/start-server-core/dist/esm/router-manifest.js", "../../node_modules/@tanstack/start-server-core/dist/esm/server-functions-handler.js", "../../node_modules/@tanstack/start-client-core/dist/esm/getDefaultSerovalPlugins.js", "../../node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js", "../../node_modules/@tanstack/start-client-core/dist/esm/index.js", "../../node_modules/@tanstack/start-server-core/dist/esm/serializer/ServerFunctionSerializationAdapter.js" and "../../node_modules/@tanstack/start-server-core/dist/esm/createStartHandler.js".
+"hydrate" and "json" are imported from external module "@tanstack/router-core/ssr/client" but never used in "../../node_modules/@tanstack/start-client-core/dist/esm/createServerFn.js" and "../../node_modules/@tanstack/start-client-core/dist/esm/index.js".
+"optionsMiddleware" is imported from external module "@better-auth/core/api" but never used in "../../node_modules/better-auth/dist/plugins/bearer/index.mjs", "../../node_modules/better-auth/dist/plugins/last-login-method/index.mjs", "../../node_modules/better-auth/dist/plugins/multi-session/index.mjs", "../../node_modules/better-auth/dist/api/middlewares/origin-check.mjs", "../../node_modules/better-auth/dist/api/routes/sign-out.mjs", "../../node_modules/better-auth/dist/api/routes/error.mjs", "../../node_modules/better-auth/dist/api/routes/ok.mjs", "../../node_modules/better-auth/dist/api/routes/email-verification.mjs", "../../node_modules/better-auth/dist/plugins/anonymous/index.mjs", "../../node_modules/better-auth/dist/plugins/custom-session/index.mjs", "../../node_modules/better-auth/dist/api/routes/session.mjs", "../../node_modules/better-auth/dist/api/routes/sign-up.mjs", "../../node_modules/better-auth/dist/api/routes/update-user.mjs", "../../node_modules/better-auth/dist/plugins/device-authorization/routes.mjs", "../../node_modules/better-auth/dist/plugins/magic-link/index.mjs", "../../node_modules/better-auth/dist/plugins/one-tap/index.mjs", "../../node_modules/better-auth/dist/plugins/one-time-token/index.mjs", "../../node_modules/better-auth/dist/plugins/oauth-proxy/index.mjs", "../../node_modules/better-auth/dist/plugins/jwt/index.mjs", "../../node_modules/better-auth/dist/api/routes/reset-password.mjs", "../../node_modules/better-auth/dist/plugins/organization/call.mjs", "../../node_modules/better-auth/dist/plugins/username/index.mjs", "../../node_modules/better-auth/dist/plugins/phone-number/routes.mjs", "../../node_modules/better-auth/dist/plugins/phone-number/index.mjs", "../../node_modules/better-auth/dist/plugins/siwe/index.mjs", "../../node_modules/better-auth/dist/plugins/oidc-provider/index.mjs", "../../node_modules/better-auth/dist/plugins/open-api/index.mjs", "../../node_modules/better-auth/dist/api/routes/account.mjs", "../../node_modules/better-auth/dist/api/routes/sign-in.mjs", "../../node_modules/better-auth/dist/plugins/generic-oauth/routes.mjs", "../../node_modules/better-auth/dist/api/routes/callback.mjs", "../../node_modules/better-auth/dist/api/index.mjs", "../../node_modules/better-auth/dist/plugins/organization/routes/crud-org.mjs", "../../node_modules/better-auth/dist/plugins/organization/routes/crud-members.mjs", "../../node_modules/better-auth/dist/plugins/organization/routes/crud-invites.mjs", "../../node_modules/better-auth/dist/plugins/organization/routes/crud-access-control.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/delete-all-expired-api-keys.mjs", "../../node_modules/better-auth/dist/plugins/admin/routes.mjs", "../../node_modules/better-auth/dist/plugins/admin/admin.mjs", "../../node_modules/better-auth/dist/plugins/email-otp/routes.mjs", "../../node_modules/better-auth/dist/plugins/email-otp/index.mjs", "../../node_modules/better-auth/dist/plugins/mcp/index.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/get-api-key.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/create-api-key.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/list-api-keys.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/delete-api-key.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/update-api-key.mjs", "../../node_modules/better-auth/dist/plugins/api-key/routes/verify-api-key.mjs", "../../node_modules/better-auth/dist/plugins/two-factor/totp/index.mjs", "../../node_modules/better-auth/dist/plugins/two-factor/backup-codes/index.mjs", "../../node_modules/better-auth/dist/plugins/two-factor/otp/index.mjs", "../../node_modules/better-auth/dist/plugins/two-factor/index.mjs", "../../node_modules/better-auth/dist/plugins/organization/routes/crud-team.mjs", "../../node_modules/better-auth/dist/plugins/organization/organization.mjs", "../../node_modules/better-auth/dist/plugins/api-key/index.mjs" and "../../node_modules/better-auth/dist/plugins/index.mjs".
+✓ 279 modules transformed.
+rendering chunks...
+dist/server/assets/start-HYkvq4Ni.js                         0.06 kB
+dist/server/assets/container-DrQHYteP.js                     0.31 kB
+dist/server/assets/createServerRpc-Bd3B-Ah9.js               0.31 kB
+dist/server/assets/server-CvJVCvoz.js                        0.93 kB
+dist/server/assets/_tanstack-start-manifest_v-Dd7ISqvz.js    1.46 kB
+dist/server/assets/theme-B17zrMW7.js                         1.66 kB
+dist/server/assets/__root-BCYhJpe1.js                        1.89 kB
+dist/server/assets/bun-sqlite-dialect-CZkoC8t5.js            4.28 kB
+dist/server/assets/node-sqlite-dialect-0sBQYD8M.js           4.29 kB
+dist/server/assets/sign-in-D7jLpbP6.js                       5.17 kB
+dist/server/assets/forgot-password-CF2iDPpq.js               5.73 kB
+dist/server/assets/index-CwQsicLb.js                         9.27 kB
+dist/server/assets/sign-up-kelHMKrq.js                       9.76 kB
+dist/server/assets/index-CB3PO6in.js                        15.22 kB
+dist/server/assets/index-C787MsWi.js                        33.77 kB
+dist/server/server.js                                       41.69 kB
+dist/server/assets/router-BsI6xu0k.js                       42.29 kB
+dist/server/assets/auth-server-CUuR2mFq.js                 228.39 kB
+✓ built in 352ms

@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { api } from "../../convex/_generated/api";
+import { api } from "@convex-tanstack-starter-kit/backend/convex/_generated/api";
 import { AppHeader } from "@/components/app-header";
 import { Link } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
