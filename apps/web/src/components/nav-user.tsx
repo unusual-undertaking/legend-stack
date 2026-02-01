@@ -48,10 +48,10 @@ export function NavUser() {
     }
 
     const sessionUser = session?.user
-    const email = sessionUser?.email ?? profile?.email ?? ""
+    const email = sessionUser?.email || profile?.email || ""
     const nameFromEmail = email ? email.split("@")[0] : ""
-    const name = sessionUser?.name ?? (nameFromEmail || "User")
-    const avatar = profile?.avatarUrl ?? sessionUser?.image ?? undefined
+    const name = sessionUser?.name || nameFromEmail || "User"
+    const avatar = profile?.avatarUrl || sessionUser?.image || undefined
     const initials =
         name
             .split(" ")
