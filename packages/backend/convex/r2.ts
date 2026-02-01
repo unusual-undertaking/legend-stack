@@ -23,6 +23,11 @@ const getR2EnvStatus = () => {
   };
 };
 
+const getAvatarKeyPrefix = (userId: Id<"users">) => `avatars/${userId}/`;
+
+const buildAvatarKey = (userId: Id<"users">) =>
+  `${getAvatarKeyPrefix(userId)}${crypto.randomUUID()}`;
+
 const getR2ClientOptions = () => {
   const status = getR2EnvStatus();
   if (status.enabled) {
@@ -57,6 +62,23 @@ const logMissingR2Env = (missing: R2EnvVar[]) => {
   hasLoggedMissingR2Env = true;
 };
 
+const assertCanUpload = async (ctx: Parameters<typeof authComponent.safeGetAuthUser>[0]) => {
+  const status = getR2EnvStatus();
+  if (!status.enabled) {
+    logMissingR2Env(status.missing);
+    throw new ConvexError(
+      "R2 is not configured in this environment. Set the required env vars to enable uploads.",
+    );
+  }
+
+  const authUser = await authComponent.safeGetAuthUser(ctx);
+  if (!authUser || !authUser.userId) {
+    throw new ConvexError("Unauthenticated");
+  }
+
+  return authUser;
+};
+
 export const r2Status = query({
   args: {},
   handler: async () => {
@@ -68,22 +90,21 @@ export const r2Status = query({
   },
 });
 
-export const { generateUploadUrl, syncMetadata } = r2.clientApi({
-  checkUpload: async (ctx) => {
-    const status = getR2EnvStatus();
-    if (!status.enabled) {
-      logMissingR2Env(status.missing);
-      throw new ConvexError(
-        "R2 is not configured in this environment. Set the required env vars to enable uploads.",
-      );
-    }
-
-    const authUser = await authComponent.safeGetAuthUser(ctx);
-    if (!authUser || !authUser.userId) {
-      throw new ConvexError("Unauthenticated");
-    }
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const authUser = await assertCanUpload(ctx);
+    const userId = authUser.userId as Id<"users">;
+    const key = buildAvatarKey(userId);
+    return await r2.generateUploadUrl(key);
   },
 });
+
+const { syncMetadata } = r2.clientApi({
+  checkUpload: assertCanUpload,
+});
+
+export { syncMetadata };
 
 export const setCurrentUserAvatar = mutation({
   args: {
@@ -95,7 +116,13 @@ export const setCurrentUserAvatar = mutation({
       throw new ConvexError("Unauthenticated");
     }
 
-    await ctx.db.patch(authUser.userId as Id<"users">, {
+    const userId = authUser.userId as Id<"users">;
+    const prefix = getAvatarKeyPrefix(userId);
+    if (!args.key.startsWith(prefix)) {
+      throw new ConvexError("Invalid avatar key.");
+    }
+
+    await ctx.db.patch(userId, {
       avatarKey: args.key,
     });
   },
@@ -109,14 +136,17 @@ export const getCurrentUserProfile = query({
       return null;
     }
 
-    const user = await ctx.db.get(authUser.userId as Id<"users">);
+    const userId = authUser.userId as Id<"users">;
+    const user = await ctx.db.get(userId);
     if (!user) {
       return null;
     }
 
     const { enabled } = getR2EnvStatus();
     const avatarKey = (user as { avatarKey?: string }).avatarKey;
-    const avatarUrl = enabled && avatarKey ? await r2.getUrl(avatarKey) : null;
+    const prefix = getAvatarKeyPrefix(userId);
+    const canServeAvatar = enabled && avatarKey && avatarKey.startsWith(prefix);
+    const avatarUrl = canServeAvatar ? await r2.getUrl(avatarKey) : null;
 
     return {
       ...user,

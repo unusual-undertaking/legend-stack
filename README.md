@@ -75,7 +75,7 @@ Note: certain options changes may require schema generation. The Better Auth doc
 ```json
 [
   {
-    "AllowedOrigins": ["http://localhost:5173"],
+    "AllowedOrigins": ["http://localhost:3000"],
     "AllowedMethods": ["GET", "PUT"],
     "AllowedHeaders": ["Content-Type"]
   }
