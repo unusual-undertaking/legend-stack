@@ -150,7 +150,7 @@ export const getCurrentUserProfile = query({
         }
 
         const { enabled } = getR2EnvStatus()
-        const avatarKey = (user as { avatarKey?: string }).avatarKey
+        const avatarKey = user.avatarKey
         const prefix = getAvatarKeyPrefix(userId)
         const canServeAvatar = enabled && avatarKey && avatarKey.startsWith(prefix)
         const avatarUrl = canServeAvatar ? await r2.getUrl(avatarKey) : null
