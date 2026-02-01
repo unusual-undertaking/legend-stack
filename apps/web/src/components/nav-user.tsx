@@ -1,7 +1,9 @@
 "use client"
 
 import { CreditCard, EllipsisVertical, LogOut, Bell, UserCircle } from "lucide-react"
+import { useQuery } from "convex/react"
 import { authClient } from "@/lib/auth-client"
+import { api } from "@convex-tanstack-starter-kit/backend/convex/_generated/api"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -20,16 +22,25 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavUser({
-    user,
-}: {
-    user: {
-        name: string
-        email: string
-        avatar: string
-    }
-}) {
+export function NavUser() {
     const { isMobile } = useSidebar()
+    const { data: session } = authClient.useSession()
+    const profile = useQuery(api.r2.getCurrentUserProfile, {})
+
+    const sessionUser = session?.user
+    const email = sessionUser?.email ?? profile?.email ?? ""
+    const nameFromEmail = email ? email.split("@")[0] : ""
+    const name = sessionUser?.name ?? (nameFromEmail || "User")
+    const avatar = profile?.avatarUrl ?? sessionUser?.image ?? undefined
+    const initials =
+        name
+            .split(" ")
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part) => part[0]?.toUpperCase())
+            .join("") ||
+        email.slice(0, 1).toUpperCase() ||
+        "U"
 
     const handleSignOut = async () => {
         await authClient.signOut({
@@ -58,13 +69,13 @@ export function NavUser({
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                <AvatarImage src={avatar} alt={name} />
+                                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name}</span>
+                                <span className="truncate font-medium">{name}</span>
                                 <span className="text-muted-foreground truncate text-xs">
-                                    {user.email}
+                                    {email}
                                 </span>
                             </div>
                             <EllipsisVertical className="ml-auto size-4" />
@@ -79,13 +90,15 @@ export function NavUser({
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    <AvatarImage src={avatar} alt={name} />
+                                    <AvatarFallback className="rounded-lg">
+                                        {initials}
+                                    </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{user.name}</span>
+                                    <span className="truncate font-medium">{name}</span>
                                     <span className="text-muted-foreground truncate text-xs">
-                                        {user.email}
+                                        {email}
                                     </span>
                                 </div>
                             </div>
