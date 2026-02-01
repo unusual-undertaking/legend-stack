@@ -74,11 +74,11 @@ Note: certain options changes may require schema generation. The Better Auth doc
 
 ```json
 [
-  {
-    "AllowedOrigins": ["http://localhost:3000"],
-    "AllowedMethods": ["GET", "PUT"],
-    "AllowedHeaders": ["Content-Type"]
-  }
+    {
+        "AllowedOrigins": ["http://localhost:3000"],
+        "AllowedMethods": ["GET", "PUT"],
+        "AllowedHeaders": ["Content-Type"]
+    }
 ]
 ```
 
@@ -114,7 +114,6 @@ are missing.
 - [x] Set up Turborepo monorepo
 - [x] Oxfmt & Oxlint setup
 - [x] Lint-staged / husky pre-commit hook
-- [ ] Convex Effect setup
 - [ ] Account page
 - [ ] Account page: Change password
 - [ ] Subscriptions / Billing page - show subscription
@@ -125,7 +124,7 @@ are missing.
 - [ ] Account page: profile pic uploader
 - [ ] Presence Component
 - [ ] Team / Org setup
-- [ ] Dark / light mode
+- [x] Dark / light mode
 - [ ] Social Sign-On: Google / Github / Apple
 - [ ] Last Login Method (Better Auth utility w/social sign-on)
 - [ ] Two factor auth (Better Auth util)

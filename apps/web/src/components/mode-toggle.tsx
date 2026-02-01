@@ -1,21 +1,21 @@
-import { Monitor, Moon, Sun, Check } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Monitor, Moon, Sun, Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useTheme, type Theme } from "@/components/theme-provider";
+} from "@/components/ui/dropdown-menu"
+import { useTheme, type Theme } from "@/components/theme-provider"
 
 const themeOptions: { value: Theme; label: string; icon: typeof Sun }[] = [
     { value: "light", label: "Light", icon: Sun },
     { value: "dark", label: "Dark", icon: Moon },
     { value: "system", label: "System", icon: Monitor },
-];
+]
 
 export function ModeToggle() {
-    const { theme, setTheme } = useTheme();
+    const { theme, setTheme } = useTheme()
 
     return (
         <DropdownMenu>
@@ -36,5 +36,5 @@ export function ModeToggle() {
                 ))}
             </DropdownMenuContent>
         </DropdownMenu>
-    );
+    )
 }

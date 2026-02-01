@@ -11,14 +11,14 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { NavUser } from "@/components/nav-user";
+} from "@/components/ui/dropdown-menu"
+import { NavUser } from "@/components/nav-user"
 
 // Menu items.
 const items = [
@@ -42,7 +42,7 @@ const items = [
         url: "#",
         icon: Settings,
     },
-];
+]
 
 export function AppSidebar() {
     return (
@@ -100,5 +100,5 @@ export function AppSidebar() {
                 </SidebarFooter>
             </SidebarContent>
         </Sidebar>
-    );
+    )
 }

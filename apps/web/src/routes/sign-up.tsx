@@ -1,93 +1,87 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
-import { Container } from "@/components/ui/container";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { Loader2 } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
+import { Container } from "@/components/ui/container"
 
 export const Route = createFileRoute("/sign-up")({
     component: SignUp,
     beforeLoad: ({ context }) => {
         if (context.isAuthenticated) {
-            throw redirect({ to: "/" });
+            throw redirect({ to: "/" })
         }
     },
-});
+})
 
 type FieldErrors = {
-    email?: string;
-    password?: string;
-    passwordConfirmation?: string;
-};
+    email?: string
+    password?: string
+    passwordConfirmation?: string
+}
 
 function parseErrorMessage(message: string): FieldErrors {
-    const errors: FieldErrors = {};
+    const errors: FieldErrors = {}
 
     if (message.includes("Invalid email") || message.includes("[body.email]")) {
-        errors.email = "Please enter a valid email address";
+        errors.email = "Please enter a valid email address"
     }
     if (message.includes("[body.password]") || message.includes("Too small")) {
-        errors.password = "Password is required";
+        errors.password = "Password is required"
     }
     if (message.includes("Password must be at least")) {
-        errors.password = message;
+        errors.password = message
     }
     if (message.includes("User already exists")) {
-        errors.email = "An account with this email already exists";
+        errors.email = "An account with this email already exists"
     }
 
     // If we couldn't parse specific errors, show the original
     if (Object.keys(errors).length === 0) {
-        errors.email = message;
+        errors.email = message
     }
 
-    return errors;
+    return errors
 }
 
 function SignUp() {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [signUpComplete, setSignUpComplete] = useState(false);
-    const [errors, setErrors] = useState<FieldErrors>({});
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [passwordConfirmation, setPasswordConfirmation] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [signUpComplete, setSignUpComplete] = useState(false)
+    const [errors, setErrors] = useState<FieldErrors>({})
 
     const validate = (): boolean => {
-        const newErrors: FieldErrors = {};
+        const newErrors: FieldErrors = {}
 
         if (!email.trim()) {
-            newErrors.email = "Email is required";
+            newErrors.email = "Email is required"
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            newErrors.email = "Please enter a valid email address";
+            newErrors.email = "Please enter a valid email address"
         }
 
         if (!password) {
-            newErrors.password = "Password is required";
+            newErrors.password = "Password is required"
         } else if (password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
+            newErrors.password = "Password must be at least 8 characters"
         }
 
         if (password && password !== passwordConfirmation) {
-            newErrors.passwordConfirmation = "Passwords do not match";
+            newErrors.passwordConfirmation = "Passwords do not match"
         }
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
 
     const handleSignUp = async () => {
-        if (!validate()) return;
+        if (!validate()) return
 
         const { data, error } = await authClient.signUp.email(
             {
@@ -97,42 +91,37 @@ function SignUp() {
             },
             {
                 onRequest: () => {
-                    setLoading(true);
-                    setErrors({});
+                    setLoading(true)
+                    setErrors({})
                 },
                 onSuccess: async () => {
-                    setLoading(false);
-                    setSignUpComplete(true);
+                    setLoading(false)
+                    setSignUpComplete(true)
                 },
                 onError: async (ctx) => {
-                    setLoading(false);
-                    setErrors(parseErrorMessage(ctx.error.message));
+                    setLoading(false)
+                    setErrors(parseErrorMessage(ctx.error.message))
                 },
-            }
-        );
-        console.log({ data, error });
-    };
+            },
+        )
+        console.log({ data, error })
+    }
 
     if (signUpComplete) {
         return (
             <Container>
                 <Card className="max-w-md">
                     <CardHeader>
-                        <CardTitle className="text-lg md:text-xl">
-                            Check your email
-                        </CardTitle>
+                        <CardTitle className="text-lg md:text-xl">Check your email</CardTitle>
                         <CardDescription className="text-xs md:text-sm">
                             We've sent a verification link to{" "}
-                            <span className="font-medium text-foreground">
-                                {email}
-                            </span>
+                            <span className="font-medium text-foreground">{email}</span>
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="text-sm text-muted-foreground">
-                            Click the link in the email to verify your account
-                            and get started. If you don't see it, check your
-                            spam folder.
+                            Click the link in the email to verify your account and get started. If
+                            you don't see it, check your spam folder.
                         </p>
                     </CardContent>
                 </Card>
@@ -146,16 +135,14 @@ function SignUp() {
                     </Link>
                 </p>
             </Container>
-        );
+        )
     }
 
     return (
         <Container>
             <Card className="max-w-md">
                 <CardHeader>
-                    <CardTitle className="text-lg md:text-xl">
-                        Sign Up
-                    </CardTitle>
+                    <CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
                     <CardDescription className="text-xs md:text-sm">
                         Enter your information to create an account
                     </CardDescription>
@@ -170,7 +157,7 @@ function SignUp() {
                                     placeholder="Jane"
                                     required
                                     onChange={(e) => {
-                                        setFirstName(e.target.value);
+                                        setFirstName(e.target.value)
                                     }}
                                     value={firstName}
                                 />
@@ -182,7 +169,7 @@ function SignUp() {
                                     placeholder="Doe"
                                     required
                                     onChange={(e) => {
-                                        setLastName(e.target.value);
+                                        setLastName(e.target.value)
                                     }}
                                     value={lastName}
                                 />
@@ -196,12 +183,12 @@ function SignUp() {
                                 placeholder="example@email.com"
                                 required
                                 onChange={(e) => {
-                                    setEmail(e.target.value);
+                                    setEmail(e.target.value)
                                     if (errors.email)
                                         setErrors((prev) => ({
                                             ...prev,
                                             email: undefined,
-                                        }));
+                                        }))
                                 }}
                                 value={email}
                             />
@@ -218,12 +205,12 @@ function SignUp() {
                                 type="password"
                                 value={password}
                                 onChange={(e) => {
-                                    setPassword(e.target.value);
+                                    setPassword(e.target.value)
                                     if (errors.password)
                                         setErrors((prev) => ({
                                             ...prev,
                                             password: undefined,
-                                        }));
+                                        }))
                                 }}
                                 autoComplete="new-password"
                                 placeholder="Password"
@@ -235,20 +222,18 @@ function SignUp() {
                             </p>
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">
-                                Confirm Password
-                            </Label>
+                            <Label htmlFor="password_confirmation">Confirm Password</Label>
                             <Input
                                 id="password_confirmation"
                                 type="password"
                                 value={passwordConfirmation}
                                 onChange={(e) => {
-                                    setPasswordConfirmation(e.target.value);
+                                    setPasswordConfirmation(e.target.value)
                                     if (errors.passwordConfirmation)
                                         setErrors((prev) => ({
                                             ...prev,
                                             passwordConfirmation: undefined,
-                                        }));
+                                        }))
                                 }}
                                 autoComplete="new-password"
                                 placeholder="Confirm Password"
@@ -285,5 +270,5 @@ function SignUp() {
                 </Link>
             </p>
         </Container>
-    );
+    )
 }

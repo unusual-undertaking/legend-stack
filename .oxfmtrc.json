@@ -1,11 +1,20 @@
 {
-  "ignorePatterns": [
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/.turbo/**",
-    "**/coverage/**",
-    "**/out/**",
-    "**/.tanstack/**",
-    "**/convex/_generated/**"
-  ]
+    "printWidth": 100,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": false,
+    "singleQuote": false,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "ignorePatterns": [
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/.turbo/**",
+        "**/coverage/**",
+        "**/out/**",
+        "**/.tanstack/**",
+        "**/convex/_generated/**"
+    ]
 }

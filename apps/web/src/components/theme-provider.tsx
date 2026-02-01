@@ -1,112 +1,158 @@
-import { ScriptOnce } from "@tanstack/react-router";
-import { createContext, use, useEffect, useState, useMemo } from "react";
+import { ScriptOnce } from "@tanstack/react-router"
+import { createContext, use, useCallback, useEffect, useMemo, useState } from "react"
 
-export type ResolvedTheme = "dark" | "light";
-export type Theme = ResolvedTheme | "system";
+export type ResolvedTheme = "dark" | "light"
+export type Theme = ResolvedTheme | "system"
 
 interface ThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
+    children: React.ReactNode
+    defaultTheme?: Theme
+    storageKey?: string
 }
 
 interface ThemeProviderState {
-  theme: Theme;
-  resolvedTheme: ResolvedTheme;
-  setTheme: (theme: Theme) => void;
+    theme: Theme
+    resolvedTheme: ResolvedTheme
+    setTheme: (theme: Theme) => void
 }
 
-const initialState: ThemeProviderState = {
-  theme: "system",
-  resolvedTheme: "light",
-  setTheme: () => null,
-};
+const permittedThemes = ["light", "dark", "system"] as const
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+const isTheme = (value: string | null): value is Theme =>
+    value !== null && permittedThemes.includes(value as Theme)
 
-const isBrowser = typeof window !== "undefined";
+const normalizeTheme = (value: string | null, fallback: Theme): Theme =>
+    isTheme(value) ? value : fallback
+const ThemeProviderContext = createContext<ThemeProviderState | undefined>(undefined)
 
-export function ThemeProvider({
-  children,
-  defaultTheme = "system",
-  storageKey = "conar.theme",
-}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (isBrowser ? (localStorage.getItem(storageKey) as Theme) : defaultTheme) || defaultTheme,
-  );
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
+const isBrowser = typeof window !== "undefined"
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const getInitialTheme = (defaultTheme: Theme, storageKey: string) => {
+    if (!isBrowser) return defaultTheme
+    return normalizeTheme(localStorage.getItem(storageKey), defaultTheme)
+}
 
-    function updateTheme() {
-      root.classList.remove("light", "dark");
-
-      if (theme === "system") {
-        const systemTheme = mediaQuery.matches ? "dark" : "light";
-        setResolvedTheme(systemTheme);
-        root.classList.add(systemTheme);
-        return;
-      }
-
-      setResolvedTheme(theme as ResolvedTheme);
-      root.classList.add(theme);
+const getInitialResolvedTheme = (defaultTheme: Theme, storageKey: string) => {
+    const initialTheme = getInitialTheme(defaultTheme, storageKey)
+    if (initialTheme === "system") {
+        if (!isBrowser) return "light"
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
     }
 
-    mediaQuery.addEventListener("change", updateTheme);
-    updateTheme();
+    return initialTheme
+}
 
-    return () => mediaQuery.removeEventListener("change", updateTheme);
-  }, [theme]);
+export function ThemeProvider({
+    children,
+    defaultTheme = "system",
+    storageKey = "conar.theme",
+}: ThemeProviderProps) {
+    const [theme, setThemeState] = useState<Theme>(() => getInitialTheme(defaultTheme, storageKey))
+    const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+        getInitialResolvedTheme(defaultTheme, storageKey),
+    )
 
-  const value = useMemo(
-    () => ({
-      theme,
-      resolvedTheme,
-      setTheme: (theme: Theme) => {
-        localStorage.setItem(storageKey, theme);
-        setTheme(theme);
-      },
-    }),
-    [theme, resolvedTheme, storageKey],
-  );
+    useEffect(() => {
+        const root = window.document.documentElement
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 
-  return (
-    <ThemeProviderContext value={value}>
-      <FunctionOnce param={storageKey}>
-        {(storageKey) => {
-          const theme: string | null = localStorage.getItem(storageKey);
+        function updateTheme() {
+            root.classList.remove("light", "dark")
 
-          if (
-            theme === "dark" ||
-            ((theme === null || theme === "system") &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches)
-          ) {
-            document.documentElement.classList.add("dark");
-          }
-        }}
-      </FunctionOnce>
-      {children}
-    </ThemeProviderContext>
-  );
+            const nextTheme = normalizeTheme(theme, defaultTheme)
+
+            if (nextTheme === "system") {
+                const systemTheme = mediaQuery.matches ? "dark" : "light"
+                setResolvedTheme(systemTheme)
+                root.classList.add(systemTheme)
+                return
+            }
+
+            setResolvedTheme(nextTheme as ResolvedTheme)
+            root.classList.add(nextTheme)
+        }
+
+        mediaQuery.addEventListener("change", updateTheme)
+        updateTheme()
+
+        return () => mediaQuery.removeEventListener("change", updateTheme)
+    }, [defaultTheme, theme])
+
+    const setTheme = useCallback(
+        (nextTheme: Theme) => {
+            const normalizedTheme = normalizeTheme(nextTheme, defaultTheme)
+            localStorage.setItem(storageKey, normalizedTheme)
+            setThemeState(normalizedTheme)
+        },
+        [defaultTheme, storageKey, setThemeState],
+    )
+
+    const value = useMemo(
+        () => ({
+            theme,
+            resolvedTheme,
+            setTheme,
+        }),
+        [theme, resolvedTheme, setTheme],
+    )
+
+    return (
+        <ThemeProviderContext.Provider value={value}>
+            <FunctionOnce
+                param={{
+                    storageKey,
+                    defaultTheme,
+                    permittedThemes,
+                }}
+            >
+                {(params) => {
+                    const storedTheme = localStorage.getItem(params.storageKey)
+                    const theme =
+                        storedTheme && params.permittedThemes.includes(storedTheme as Theme)
+                            ? (storedTheme as Theme)
+                            : params.defaultTheme
+
+                    if (
+                        theme === "dark" ||
+                        (theme === "system" &&
+                            window.matchMedia("(prefers-color-scheme: dark)").matches)
+                    ) {
+                        document.documentElement.classList.remove("light")
+                        document.documentElement.classList.add("dark")
+                    }
+                }}
+            </FunctionOnce>
+            {children}
+        </ThemeProviderContext.Provider>
+    )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
-  const context = use(ThemeProviderContext);
+    const context = use(ThemeProviderContext)
 
-  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+    if (context === undefined) {
+        throw new Error("useTheme must be used within a ThemeProvider")
+    }
 
-  return context;
+    return context
 }
 
+/**
+ * FunctionOnce serializes the `children` callback via `children.toString()`
+ * and executes it with `ScriptOnce`, so it only supports self-contained,
+ * top-level functions. Functions that close over external bindings or imports
+ * will fail at runtime. Prefer pure functions that rely on `param`, or use
+ * alternatives such as global/window functions or an inlined script when
+ * captured state is required. This applies to both the `children` and `param`
+ * arguments passed to FunctionOnce and ScriptOnce.
+ */
 function FunctionOnce<T = unknown>({
-  children,
-  param,
+    children,
+    param,
 }: {
-  children: (param: T) => unknown;
-  param?: T;
+    children: (param: T) => unknown
+    param?: T
 }) {
-  return <ScriptOnce>{`(${children.toString()})(${JSON.stringify(param)})`}</ScriptOnce>;
+    return <ScriptOnce>{`(${children.toString()})(${JSON.stringify(param)})`}</ScriptOnce>
 }
