@@ -1,48 +1,112 @@
-import { setThemeServerFn } from "@/lib/theme";
-import { useRouter } from "@tanstack/react-router";
-import { createContext, PropsWithChildren, use, useEffect, useState } from "react";
+import { ScriptOnce } from "@tanstack/react-router";
+import { createContext, use, useEffect, useState, useMemo } from "react";
 
-export type Theme = "light" | "dark" | "system";
+export type ResolvedTheme = "dark" | "light";
+export type Theme = ResolvedTheme | "system";
 
-type ThemeContextVal = {
-    theme: Theme;
-    resolvedTheme: "light" | "dark";
-    setTheme: (val: Theme) => void;
-};
-type Props = PropsWithChildren<{ theme: Theme }>;
-
-const ThemeContext = createContext<ThemeContextVal | null>(null);
-
-function getSystemTheme(): "light" | "dark" {
-    if (typeof window === "undefined") return "light";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+interface ThemeProviderProps {
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
 }
 
-export function ThemeProvider({ children, theme }: Props) {
-    const router = useRouter();
-    const [systemTheme, setSystemTheme] = useState<"light" | "dark">(getSystemTheme);
+interface ThemeProviderState {
+  theme: Theme;
+  resolvedTheme: ResolvedTheme;
+  setTheme: (theme: Theme) => void;
+}
 
-    useEffect(() => {
-        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        const handleChange = (e: MediaQueryListEvent) => {
-            setSystemTheme(e.matches ? "dark" : "light");
-        };
-        mediaQuery.addEventListener("change", handleChange);
-        return () => mediaQuery.removeEventListener("change", handleChange);
-    }, []);
+const initialState: ThemeProviderState = {
+  theme: "system",
+  resolvedTheme: "light",
+  setTheme: () => null,
+};
 
-    const resolvedTheme = theme === "system" ? systemTheme : theme;
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-    function setTheme(val: Theme) {
-        setThemeServerFn({ data: val });
-        router.invalidate();
+const isBrowser = typeof window !== "undefined";
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "conar.theme",
+}: ThemeProviderProps) {
+  const [theme, setTheme] = useState<Theme>(
+    () => (isBrowser ? (localStorage.getItem(storageKey) as Theme) : defaultTheme) || defaultTheme,
+  );
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function updateTheme() {
+      root.classList.remove("light", "dark");
+
+      if (theme === "system") {
+        const systemTheme = mediaQuery.matches ? "dark" : "light";
+        setResolvedTheme(systemTheme);
+        root.classList.add(systemTheme);
+        return;
+      }
+
+      setResolvedTheme(theme as ResolvedTheme);
+      root.classList.add(theme);
     }
 
-    return <ThemeContext value={{ theme, resolvedTheme, setTheme }}>{children}</ThemeContext>;
+    mediaQuery.addEventListener("change", updateTheme);
+    updateTheme();
+
+    return () => mediaQuery.removeEventListener("change", updateTheme);
+  }, [theme]);
+
+  const value = useMemo(
+    () => ({
+      theme,
+      resolvedTheme,
+      setTheme: (theme: Theme) => {
+        localStorage.setItem(storageKey, theme);
+        setTheme(theme);
+      },
+    }),
+    [theme, resolvedTheme, storageKey],
+  );
+
+  return (
+    <ThemeProviderContext value={value}>
+      <FunctionOnce param={storageKey}>
+        {(storageKey) => {
+          const theme: string | null = localStorage.getItem(storageKey);
+
+          if (
+            theme === "dark" ||
+            ((theme === null || theme === "system") &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches)
+          ) {
+            document.documentElement.classList.add("dark");
+          }
+        }}
+      </FunctionOnce>
+      {children}
+    </ThemeProviderContext>
+  );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
-    const val = use(ThemeContext);
-    if (!val) throw new Error("useTheme called outside of ThemeProvider!");
-    return val;
+  const context = use(ThemeProviderContext);
+
+  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+
+  return context;
+}
+
+function FunctionOnce<T = unknown>({
+  children,
+  param,
+}: {
+  children: (param: T) => unknown;
+  param?: T;
+}) {
+  return <ScriptOnce>{`(${children.toString()})(${JSON.stringify(param)})`}</ScriptOnce>;
 }
