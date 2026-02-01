@@ -13,7 +13,6 @@ import type { ConvexQueryClient } from "@convex-dev/react-query";
 import * as React from "react";
 import { ThemeProvider, useTheme } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { getThemeServerFn } from "@/lib/theme";
 import { authClient } from "@/lib/auth-client";
 import { getToken } from "@/lib/auth-server";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -60,13 +59,9 @@ export const Route = createRootRouteWithContext<{
       ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
     }
 
-    // Get the theme from the cookie
-    const theme = await getThemeServerFn();
-
     return {
       isAuthenticated: !!token,
       token,
-      theme,
     };
   },
   component: RootComponent,
@@ -81,7 +76,7 @@ function RootComponent() {
       authClient={authClient}
       initialToken={context.token}
     >
-      <ThemeProvider theme={context.theme}>
+      <ThemeProvider>
         <RootDocument>
           <Outlet />
         </RootDocument>
