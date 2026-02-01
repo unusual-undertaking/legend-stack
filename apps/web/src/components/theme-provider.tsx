@@ -1,5 +1,5 @@
 import { ScriptOnce } from "@tanstack/react-router"
-import { createContext, use, useEffect, useState, useMemo } from "react"
+import { createContext, use, useCallback, useEffect, useMemo, useState } from "react"
 
 export type ResolvedTheme = "dark" | "light"
 export type Theme = ResolvedTheme | "system"
@@ -27,16 +27,30 @@ const ThemeProviderContext = createContext<ThemeProviderState | undefined>(undef
 
 const isBrowser = typeof window !== "undefined"
 
+const getInitialTheme = (defaultTheme: Theme, storageKey: string) => {
+    if (!isBrowser) return defaultTheme
+    return normalizeTheme(localStorage.getItem(storageKey), defaultTheme)
+}
+
+const getInitialResolvedTheme = (defaultTheme: Theme, storageKey: string) => {
+    const initialTheme = getInitialTheme(defaultTheme, storageKey)
+    if (initialTheme === "system") {
+        if (!isBrowser) return "light"
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    }
+
+    return initialTheme
+}
+
 export function ThemeProvider({
     children,
     defaultTheme = "system",
     storageKey = "conar.theme",
 }: ThemeProviderProps) {
-    const [theme, setThemeState] = useState<Theme>(() => {
-        if (!isBrowser) return defaultTheme
-        return normalizeTheme(localStorage.getItem(storageKey), defaultTheme)
-    })
-    const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light")
+    const [theme, setThemeState] = useState<Theme>(() => getInitialTheme(defaultTheme, storageKey))
+    const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+        getInitialResolvedTheme(defaultTheme, storageKey),
+    )
 
     useEffect(() => {
         const root = window.document.documentElement
@@ -64,17 +78,22 @@ export function ThemeProvider({
         return () => mediaQuery.removeEventListener("change", updateTheme)
     }, [defaultTheme, theme])
 
+    const setTheme = useCallback(
+        (nextTheme: Theme) => {
+            const normalizedTheme = normalizeTheme(nextTheme, defaultTheme)
+            localStorage.setItem(storageKey, normalizedTheme)
+            setThemeState(normalizedTheme)
+        },
+        [defaultTheme, storageKey, setThemeState],
+    )
+
     const value = useMemo(
         () => ({
             theme,
             resolvedTheme,
-            setTheme: (nextTheme: Theme) => {
-                const normalizedTheme = normalizeTheme(nextTheme, defaultTheme)
-                localStorage.setItem(storageKey, normalizedTheme)
-                setThemeState(normalizedTheme)
-            },
+            setTheme,
         }),
-        [defaultTheme, theme, resolvedTheme, storageKey],
+        [theme, resolvedTheme, setTheme],
     )
 
     return (
@@ -119,6 +138,15 @@ export function useTheme() {
     return context
 }
 
+/**
+ * FunctionOnce serializes the `children` callback via `children.toString()`
+ * and executes it with `ScriptOnce`, so it only supports self-contained,
+ * top-level functions. Functions that close over external bindings or imports
+ * will fail at runtime. Prefer pure functions that rely on `param`, or use
+ * alternatives such as global/window functions or an inlined script when
+ * captured state is required. This applies to both the `children` and `param`
+ * arguments passed to FunctionOnce and ScriptOnce.
+ */
 function FunctionOnce<T = unknown>({
     children,
     param,
