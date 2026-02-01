@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client"
 import { api } from "@convex-tanstack-starter-kit/backend/convex/_generated/api"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,8 +25,27 @@ import {
 
 export function NavUser() {
     const { isMobile } = useSidebar()
-    const { data: session } = authClient.useSession()
+    const { data: session, isPending: isSessionPending } = authClient.useSession()
     const profile = useQuery(api.r2.getCurrentUserProfile, {})
+
+    const isProfileLoading = profile === undefined
+    const isLoading = isSessionPending || isProfileLoading
+
+    if (isLoading) {
+        return (
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton size="lg">
+                        <Skeleton className="h-8 w-8 rounded-lg" />
+                        <div className="grid flex-1 gap-1 text-left text-sm leading-tight">
+                            <Skeleton className="h-4 w-28" />
+                            <Skeleton className="h-3 w-32" />
+                        </div>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        )
+    }
 
     const sessionUser = session?.user
     const email = sessionUser?.email ?? profile?.email ?? ""
