@@ -1,35 +1,35 @@
 {
-  "name": "convex-tanstack-starter-kit",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "type": "module",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "dev:web": "turbo -F web dev",
-    "dev:backend": "turbo -F @convex-tanstack-starter-kit/backend dev",
-    "dev:setup": "turbo -F @convex-tanstack-starter-kit/backend dev:setup",
-    "lint": "oxlint .",
-    "lint:fix": "oxlint --fix .",
-    "format": "oxfmt --write .",
-    "format:check": "oxfmt --check .",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "oxfmt": "^0.27.0",
-    "oxlint": "^1.42.0",
-    "turbo": "^2.6.3"
-  },
-  "lint-staged": {
-    "*": [
-      "oxlint",
-      "oxfmt --write"
-    ]
-  },
-  "packageManager": "npm@11.3.0"
+    "name": "convex-tanstack-starter-kit",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "type": "module",
+    "scripts": {
+        "dev": "turbo dev",
+        "build": "turbo build",
+        "dev:web": "turbo -F web dev",
+        "dev:backend": "turbo -F @convex-tanstack-starter-kit/backend dev",
+        "dev:setup": "turbo -F @convex-tanstack-starter-kit/backend dev:setup",
+        "lint": "oxlint .",
+        "lint:fix": "oxlint --fix .",
+        "format": "oxfmt --write .",
+        "format:check": "oxfmt --check .",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "oxfmt": "^0.27.0",
+        "oxlint": "^1.42.0",
+        "turbo": "^2.6.3"
+    },
+    "lint-staged": {
+        "*": [
+            "oxlint",
+            "oxfmt --write"
+        ]
+    },
+    "packageManager": "npm@11.3.0"
 }

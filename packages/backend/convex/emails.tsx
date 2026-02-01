@@ -42,9 +42,7 @@ export const sendVerificationEmail = internalAction({
         const html = await pretty(
             await render(
                 <Html>
-                    <Text>
-                        Welcome! Please verify your email address to get started.
-                    </Text>
+                    <Text>Welcome! Please verify your email address to get started.</Text>
                     <Section style={{ textAlign: "center", margin: "32px 0" }}>
                         <Button
                             href={args.url}
@@ -69,18 +67,12 @@ export const sendVerificationEmail = internalAction({
                             wordBreak: "break-all",
                         }}
                     >
-                        If the button doesn't work, copy and paste this link into
-                        your browser:{" "}
-                        <a
-                            href={args.url}
-                            style={{ color: "#2563eb" }}
-                        >
+                        If the button doesn't work, copy and paste this link into your browser:{" "}
+                        <a href={args.url} style={{ color: "#2563eb" }}>
                             {args.url}
                         </a>
                     </Text>
-                    <Text>
-                        If you didn't create an account, you can safely ignore this email.
-                    </Text>
+                    <Text>If you didn't create an account, you can safely ignore this email.</Text>
                 </Html>,
             ),
         )
@@ -124,21 +116,13 @@ export const sendPasswordResetEmail = internalAction({
         const html = await pretty(
             await render(
                 <Html>
-                    <Text>
-                        You requested a password reset for your account.
-                    </Text>
-                    <Text>
-                        Click the link below to reset your password:
-                    </Text>
+                    <Text>You requested a password reset for your account.</Text>
+                    <Text>Click the link below to reset your password:</Text>
                     <Text>
                         <a href={args.url}>{args.url}</a>
                     </Text>
-                    <Text>
-                        If you didn't request this, you can safely ignore this email.
-                    </Text>
-                    <Text>
-                        This link will expire in 1 hour.
-                    </Text>
+                    <Text>If you didn't request this, you can safely ignore this email.</Text>
+                    <Text>This link will expire in 1 hour.</Text>
                 </Html>,
             ),
         )
