@@ -49,17 +49,19 @@ const getR2ClientOptions = () => {
 
 const r2 = new R2(components.r2, getR2ClientOptions())
 
-let hasLoggedMissingR2Env = false
-
 const logMissingR2Env = (missing: R2EnvVar[]) => {
-    if (hasLoggedMissingR2Env) {
+    const globalState = globalThis as typeof globalThis & {
+        __convexHasLoggedMissingR2Env?: boolean
+    }
+
+    if (globalState.__convexHasLoggedMissingR2Env) {
         return
     }
 
     console.warn("R2 is not configured; uploads are disabled.", {
         missing,
     })
-    hasLoggedMissingR2Env = true
+    globalState.__convexHasLoggedMissingR2Env = true
 }
 
 const assertCanUpload = async (ctx: Parameters<typeof authComponent.safeGetAuthUser>[0]) => {
@@ -129,9 +131,27 @@ export const setCurrentUserAvatar = mutation({
             throw new ConvexError("Invalid avatar key.")
         }
 
+        const user = await ctx.db.get(userId)
+        const previousAvatarKey = user?.avatarKey
+
         await ctx.db.patch(userId, {
             avatarKey: args.key,
         })
+
+        if (
+            previousAvatarKey &&
+            previousAvatarKey !== args.key &&
+            previousAvatarKey.startsWith(prefix)
+        ) {
+            try {
+                await r2.deleteObject(ctx, previousAvatarKey)
+            } catch (err) {
+                console.warn("Failed to delete previous avatar from R2.", {
+                    err,
+                    key: previousAvatarKey,
+                })
+            }
+        }
     },
 })
 
