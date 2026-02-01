@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.10.10",
+    "@convex-dev/r2": "^0.8.1",
     "@convex-dev/react-query": "^0.0.0-alpha.11",
     "@convex-tanstack-starter-kit/backend": "1.0.0",
     "@radix-ui/react-avatar": "^1.1.11",

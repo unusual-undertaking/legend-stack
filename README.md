@@ -67,6 +67,39 @@ Note: certain options changes may require schema generation. The Better Auth doc
 - Resend for emails
 - Polar or Autumn for billing/subscriptions (undecided which one atm)
 
+## R2 Setup (Cloudflare)
+
+1. Create a Cloudflare account and an R2 bucket.
+2. Add a CORS policy for the bucket (allow GET + PUT). For local dev with Vite:
+
+```json
+[
+  {
+    "AllowedOrigins": ["http://localhost:5173"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"]
+  }
+]
+```
+
+3. Create an R2 API token with **Object Read & Write** for your bucket.
+4. Set Convex environment variables (from the API token screen):
+
+```bash
+cd packages/backend
+npx convex env set R2_TOKEN <token>
+npx convex env set R2_ACCESS_KEY_ID <access-key-id>
+npx convex env set R2_SECRET_ACCESS_KEY <secret-access-key>
+npx convex env set R2_ENDPOINT <endpoint>
+npx convex env set R2_BUCKET <bucket-name>
+```
+
+5. Start the app and open `/account` after signing in to upload a profile image.
+
+Local dev note: if the R2 env vars are missing, uploads are disabled and a warning
+is logged to the `npx convex dev` console. The UI will also show which variables
+are missing.
+
 ## Notes
 
 - Verifying emails and resetting passwords requires sending emails (project is configured for Resend) that contains a url that can be visited to complete the action, but locally (or when a Resend API key is not available) the verification urls will be logged to the console (the `npx convex dev` terminal window).

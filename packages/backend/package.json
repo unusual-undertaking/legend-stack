@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@convex-dev/better-auth": "^0.10.10",
+    "@convex-dev/r2": "^0.8.1",
     "@convex-dev/resend": "^0.1.13",
     "@react-email/components": "1.0.4",
     "@react-email/render": "2.0.2",

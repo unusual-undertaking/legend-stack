@@ -1,41 +1,34 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { useSearch } from '@tanstack/react-router'
-import { useNavigate } from '@tanstack/react-router'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
-import { authClient } from '@/lib/auth-client'
-import { toast } from 'sonner'
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
-export const Route = createFileRoute('/reset-password')({
+export const Route = createFileRoute("/reset-password")({
   component: ResetPassword,
-})
+});
 
 export function ResetPassword() {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const searchParams = useSearch({ strict: false })
-  const token: string | undefined = (searchParams as any).token
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const searchParams = useSearch({ strict: false });
+  const token: string | undefined = (searchParams as any).token;
 
   const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!token) return
+    e.preventDefault();
+    if (!token) return;
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
-      return
+      toast.error("Passwords do not match");
+      return;
     }
 
     await authClient.resetPassword(
@@ -45,20 +38,20 @@ export function ResetPassword() {
       },
       {
         onRequest: () => {
-          setLoading(true)
+          setLoading(true);
         },
         onSuccess: () => {
-          setLoading(false)
-          toast.success('Password reset successfully. Please sign in.')
-          navigate({ to: '/sign-in' })
+          setLoading(false);
+          toast.success("Password reset successfully. Please sign in.");
+          navigate({ to: "/sign-in" });
         },
         onError: (ctx) => {
-          setLoading(false)
-          toast.error(ctx.error.message)
+          setLoading(false);
+          toast.error(ctx.error.message);
         },
       },
-    )
-  }
+    );
+  };
 
   if (!token) {
     return (
@@ -67,13 +60,12 @@ export function ResetPassword() {
           <CardHeader className="space-y-2">
             <CardTitle className="text-lg md:text-xl">Invalid Link</CardTitle>
             <CardDescription className="text-xs md:text-sm">
-              This password reset link is invalid or has expired. Please request
-              a new one.
+              This password reset link is invalid or has expired. Please request a new one.
             </CardDescription>
           </CardHeader>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -112,16 +104,11 @@ export function ResetPassword() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                'Reset Password'
-              )}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : "Reset Password"}
             </Button>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
